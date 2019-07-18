@@ -33,21 +33,24 @@ function findById(id){
 function findSteps(){
     return db('schemes as s')
     .innerJoin('steps as st', 's.id', 'st.scheme_id')
+    .orderBy('step_number')
 }
 
+
+//not working
 function findStepById(id){
-    console.log(id)
-    return db('schemes as s')
-    .innerJoin('steps as st', 's.id', 'st.scheme_id')
-    .where({id})
-    .first()
-    .then(step =>{
-        if(step){
-            return step;
-        }else{
-            return null;
-        }
-    });
+    // console.log(id)
+    // return db('schemes as s')
+    // .innerJoin('steps as st', 's.id', 'st.scheme_id')
+    // .where({id})
+    // .first()
+    // .then(step =>{
+    //     if(step){
+    //         return step;
+    //     }else{
+    //         return null;
+    //     }
+    // });
 }
 
 function add(data){
@@ -62,9 +65,8 @@ function remove(id){
 }
 
 function update(data, id){
-    return db('schemes').update(data)
-    .where({id})
-    ;
+  return db('schemes').update(data)
+  .where({id})
 }
 
 

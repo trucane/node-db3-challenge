@@ -82,7 +82,7 @@ router.post('/', async (req, res) => {
 
 });
 
-router.post('/:id/steps', async (req, res) => {
+router.post('/:id/addStep', async (req, res) => {
   const stepData = req.body;
   const { id } = req.params; 
 
