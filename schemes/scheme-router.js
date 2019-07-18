@@ -1,7 +1,6 @@
 const express = require('express');
 
 const Schemes = require('./scheme-model.js');
-
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -29,16 +28,38 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+router.get('/:id/steps/:step_id', async (req, res) => {
+  const { step_id } = req.params;
+
+  try {
+    const scheme = await Schemes.findStepById(step_id);
+
+    if (scheme) {
+      res.json(scheme);
+    } else {
+      res.status(404).json({ message: 'Could not find scheme with given id.' })
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to get steps' });
+  }
+});
+
 router.get('/:id/steps', async (req, res) => {
   const { id } = req.params;
 
   try {
-    const steps = await Schemes.findSteps(id);
+    const scheme = await Schemes.findById(id);
 
-    if (steps.length) {
-      res.json(steps);
-    } else {
-      res.status(404).json({ message: 'Could not find steps for given scheme' })
+    if(scheme){
+      const steps = await Schemes.findSteps(id);
+  
+      if (steps.length) {
+        res.json(steps);
+      } else {
+        res.status(404).json({ message: 'Could not find steps for given scheme' })
+      }
+    }else{
+      res.status(404).json({ message: 'Could not find this scheme' })
     }
   } catch (err) {
     res.status(500).json({ message: 'Failed to get steps' });
@@ -46,14 +67,19 @@ router.get('/:id/steps', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-  const schemeData = req.body;
+  const {scheme_name} = req.body;
+  if(!scheme_name){
+    res.status(400).json({message:"Please add a name"})
+  }else{
 
-  try {
-    const scheme = await Schemes.add(schemeData);
-    res.status(201).json(scheme);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to create new scheme' });
+    try {
+      const scheme = await Schemes.add(req.body);
+      res.status(201).json(scheme);
+    } catch (err) {
+      res.status(500).json({ message: 'Failed to create new scheme' });
+    }
   }
+
 });
 
 router.post('/:id/steps', async (req, res) => {
@@ -108,4 +134,20 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+
+router.delete('/:id/steps/:step_id', async (req, res) => {
+  const {step_id} = req.params;
+
+  try {
+    const deleted = await Schemes.removeStep(step_id);
+
+    if (deleted) {
+      res.json({ removed: deleted });
+    } else {
+      res.status(404).json({ message: 'Could not find scheme with given id' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to delete scheme' });
+  }
+});
 module.exports = router;
