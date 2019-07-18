@@ -1,6 +1,9 @@
 # Database Queries
 
 ### Display the ProductName and CategoryName for all products in the database. Shows 76 records.
+select productname, categoryname
+from products
+inner join categories on products.categoryid = categories.categoryid
 
 ### Display the OrderID and ShipperName for all orders placed before January 9, 1997. Shows 161 records.
 
